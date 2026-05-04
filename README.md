@@ -6,7 +6,7 @@ Unlike traditional languages that assume prior knowledge, D-Code is designed to 
 
 ---
 
-## 🎯 Aim
+## Aim
 
 The main aim of D-Code is to bridge the gap between block-based beginner programming and traditional text-based coding. Many learners struggle when transitioning from visual tools like Scratch to real programming languages due to syntax complexity and lack of understanding of how code is actually executed.
 
@@ -16,7 +16,7 @@ The long-term goal is to make programming more intuitive and less intimidating b
 
 ---
 
-## featuress
+## features
 
 - Custom lexer(tokenises raw source code)
 - Recursive Descent Parser
