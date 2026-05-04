@@ -25,12 +25,14 @@ The long-term goal is to make programming more intuitive and less intimidating b
 - Variable assignment and access
 - Arithmetic operations (`+`, `-`, `*`, `/`)
 - Output using `say`
-- Looping with `repeat number  whatever end
+-- Output using `say`
+- Looping with `repeat number ... end`
 
 ---
 
-##example Syntax
+## Example Syntax
 
+```dcode
 x = 5
 y = 10
 
