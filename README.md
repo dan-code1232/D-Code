@@ -5,7 +5,13 @@ D-Code is a custom programming language built from scratch in Python. It is desi
 Unlike traditional languages that assume prior knowledge, D-Code is designed to act as a bridge between beginner-friendly visual programming environments (like Scratch) and real-world text-based programming languages (like Python).
 
 ---
+### Vision
 
+D-Code is not just about running code — it's about understanding how code is built.
+
+The goal is to turn abstract programming concepts into something visible, editable, and understandable for learners moving from beginner to advanced programming.
+
+---
 ## Aim
 
 The main aim of D-Code is to bridge the gap between block-based beginner programming and traditional text-based coding. Many learners struggle when transitioning from visual tools like Scratch to real programming languages due to syntax complexity and lack of understanding of how code is actually executed.
@@ -16,7 +22,7 @@ The long-term goal is to make programming more intuitive and less intimidating b
 
 ---
 
-## features
+## Features
 
 - Custom lexer(tokenises raw source code)
 - Recursive Descent Parser
