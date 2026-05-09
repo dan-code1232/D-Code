@@ -18,12 +18,12 @@ class Parser:
                 self.move()
                 continue
 
-            stmt = self.parse_expression()
+            stmt = self.parse_comparison()
 
             if stmt:
                 statements.append(stmt)
             else:
-                self.move()  # 🔥 prevents infinite loop
+                self.move()
 
         return ProgramNode(statements)
 
@@ -56,6 +56,17 @@ class Parser:
 
         return left
 
+    def parse_comparison(self):
+        left = self.parse_expression()
+
+        while self.current and self.current.type in ("EQ", "NE", "GT", "LT", "GTE", "LTE"):
+            op = self.current
+            self.move()
+            right = self.parse_expression()
+            left = BinOpNode(left, op, right)
+
+        return left
+
     def parse_factor(self):
         c = self.current
 
@@ -74,7 +85,39 @@ class Parser:
 
             if c.value == "say":
                 self.move()
-                return SayNode(self.parse_expression())
+                return SayNode(self.parse_comparison())
+
+            if c.value == "if":
+                self.move()
+
+                condition = self.parse_comparison()
+                body = []
+                elsebody = []
+
+                while self.current and not (
+                    self.current.type == "KEYWORD" and self.current.value in ["end", "else"]
+                ):
+                    if self.current.type == "NEWLINE":
+                        self.move()
+                        continue
+
+                    body.append(self.parse_expression())
+
+                if self.current and self.current.type == "KEYWORD" and self.current.value == "else":
+                    self.move()
+
+                    while self.current and not (
+                        self.current.type == "KEYWORD" and self.current.value == "end"
+                    ):
+                        if self.current.type == "NEWLINE":
+                            self.move()
+                            continue
+
+                        elsebody.append(self.parse_expression())
+
+                self.move()  # consume "end"
+
+                return IfNode(condition, body, elsebody)
 
             if c.value == "repeat":
                 self.move()
