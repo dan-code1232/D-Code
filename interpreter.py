@@ -27,6 +27,14 @@ class Interpreter:
         elif isinstance(node, SayNode):
             print(self.eval(node.value))
 
+        elif isinstance(node, IfNode):
+            if self.eval(node.condition):
+                for stmt in node.body:
+                    self.eval(stmt)
+            else:
+                for stmt in node.else_body:
+                    self.eval(stmt)
+
         elif isinstance(node, BinOpNode):
             l = self.eval(node.left)
             r = self.eval(node.right)

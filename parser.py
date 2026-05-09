@@ -86,17 +86,38 @@ class Parser:
             if c.value == "say":
                 self.move()
                 return SayNode(self.parse_comparison())
-               
+
             if c.value == "if":
                 self.move()
-                condition = self.parse(comparison)
+
+                condition = self.parse_comparison()
                 body = []
-                while self.current and not (self.current.type == "KEYWORD" and self.current.value in ["end","else"]):
+                elsebody = []
+
+                while self.current and not (
+                    self.current.type == "KEYWORD" and self.current.value in ["end", "else"]
+                ):
                     if self.current.type == "NEWLINE":
-                         self.move()
-                         continue
-                    if self.current.type == ""
-                body.append(self.parse_expression())
+                        self.move()
+                        continue
+
+                    body.append(self.parse_expression())
+
+                if self.current and self.current.type == "KEYWORD" and self.current.value == "else":
+                    self.move()
+
+                    while self.current and not (
+                        self.current.type == "KEYWORD" and self.current.value == "end"
+                    ):
+                        if self.current.type == "NEWLINE":
+                            self.move()
+                            continue
+
+                        elsebody.append(self.parse_expression())
+
+                self.move()  # consume "end"
+
+                return IfNode(condition, body, elsebody)
 
             if c.value == "repeat":
                 self.move()
