@@ -81,3 +81,13 @@ class ComparisonNode:
 
     def __repr__(self):
         return f"Repeat({self.times}, {self.body})"
+
+
+
+class RandintNode:
+    def __init__(self, low, high):
+        self.low = low
+        self.high = high
+
+    def __repr__(self):
+        return f"Randint({self.low}, {self.high})"
