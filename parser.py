@@ -73,6 +73,31 @@ class Parser:
         if not c:
             return None
 
+        # ---------------- RANDOM_NUM FIXED ----------------
+        if c.type == "KEYWORD" and c.value == "random_num":
+            self.move()
+
+            if not self.current or self.current.type != "LBRACKET":
+                raise Exception("Expected '(' after random_num")
+
+            self.move()
+
+            low = self.parse_expression()
+
+            if not self.current or self.current.type != "COMA":
+                raise Exception("Expected ',' in random_num")
+
+            self.move()
+
+            high = self.parse_expression()
+
+            if not self.current or self.current.type != "RBRACKET":
+                raise Exception("Expected ')' after random_num")
+
+            self.move()
+
+            return RandintNode(low, high)
+
         if c.type == "NUMBER":
             self.move()
             return NumberNode(c.value)

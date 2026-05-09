@@ -15,7 +15,7 @@ class Lexer:
 
         self.nums = "0123456789"
         self.text = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_"
-        self.keywords = ["say", "repeat", "end", "if", "else"]
+        self.keywords = ["say", "repeat", "end", "if", "else","random_num"]
 
     def current(self):
         return self.code[self.pos] if self.pos < self.length else None
@@ -117,7 +117,21 @@ class Lexer:
                 tokens.append(Token("LT", "LT"))
                 self.move()
                 continue
-
+            
+            if c in "(":
+                tokens.append(Token("LBRACKET",c))
+                self.move()
+                continue
+            
+            if c in ")":
+                tokens.append(Token("RBRACKET",c))
+                self.move()
+                continue
+            if c in ",":
+                tokens.append(Token("COMA",c))
+                self.move()
+                continue
+                  
             # ---------------- MATH OPS ----------------
 
             if c in "+-*/=":

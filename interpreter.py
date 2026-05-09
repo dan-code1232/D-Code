@@ -1,8 +1,10 @@
 from ast_nodes import *
+from randomgen import *
 
 class Interpreter:
     def __init__(self):
         self.memory = {}
+        self.rng = Random()
 
     def eval(self, node):
 
@@ -26,6 +28,16 @@ class Interpreter:
 
         elif isinstance(node, SayNode):
             print(self.eval(node.value))
+
+        elif isinstance(node, RandintNode):
+            low = self.eval(node.low)
+            high = self.eval(node.high)
+
+            if low > high:
+                low, high = high, low
+
+            print( low + (self.rng.next() % (high - low + 1)))
+            return low + (self.rng.next() % (high - low + 1))
 
         elif isinstance(node, IfNode):
             if self.eval(node.condition):
