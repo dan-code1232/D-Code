@@ -115,7 +115,7 @@ class Parser:
 
                         elsebody.append(self.parse_expression())
 
-                self.move()  # consume "end"
+                self.move()  
 
                 return IfNode(condition, body, elsebody)
 
