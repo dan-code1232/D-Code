@@ -14,7 +14,7 @@ class Interpreter:
             return node.value
 
         elif isinstance(node, StringNode):
-            return node.text
+            return node.value
 
         elif isinstance(node, AccessVarNode):
             return self.memory.get(node.name, 0)
@@ -31,14 +31,29 @@ class Interpreter:
             l = self.eval(node.left)
             r = self.eval(node.right)
 
-            if node.op.value == "+":
+            op = node.op.value
+
+            if op == "+":
                 return l + r
-            if node.op.value == "-":
+            if op == "-":
                 return l - r
-            if node.op.value == "*":
+            if op == "*":
                 return l * r
-            if node.op.value == "/":
+            if op == "/":
                 return l / r
+
+            if op == "EQ":
+                return l == r
+            if op == "NE":
+                return l != r
+            if op == "GT":
+                return l > r
+            if op == "LT":
+                return l < r
+            if op == "GTE":
+                return l >= r
+            if op == "LTE":
+                return l <= r
 
         elif isinstance(node, RepeatNode):
             times = int(self.eval(node.times))

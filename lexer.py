@@ -10,57 +10,38 @@ class Token:
 class Lexer:
     def __init__(self, code):
         self.code = code
-        self.nums = "1234567890"
-        self.char = 0
-        self.length = len(self.code)
-        self.operators = "+-*/="
-        self.string_begin = "'"
+        self.pos = 0
+        self.length = len(code)
+
+        self.nums = "0123456789"
         self.text = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_"
-        self.keywords = ["say", "repeat", "end"]
+        self.keywords = ["say", "repeat", "end", "if", "else"]
+
+    def current(self):
+        return self.code[self.pos] if self.pos < self.length else None
+
+    def peek(self):
+        nxt = self.pos + 1
+        return self.code[nxt] if nxt < self.length else None
 
     def move(self):
-        self.char += 1
-
-    def current_char(self):
-        return self.code[self.char] if self.char < self.length else None
+        self.pos += 1
 
     def skip_whitespace(self):
-        while self.current_char() and self.current_char().isspace() and self.current_char() != "\n":
+        while self.current() and self.current().isspace() and self.current() != "\n":
             self.move()
-
-    def get_nums(self):
-        c = self.current_char()
-        return c is not None and (c in self.nums or c == ".")
-
-    def get_text(self):
-        c = self.current_char()
-        return c is not None and (c in self.text or c in self.nums)
-
-    def get_string(self):
-        self.move()
-        chars = []
-
-        while self.current_char() and self.current_char() != self.string_begin:
-            chars.append(self.current_char())
-            self.move()
-
-        if self.current_char() is None:
-            raise Exception("Unterminated string")
-
-        self.move()
-        return Token("STRING", "".join(chars))
 
     def number(self):
         num = []
-        while self.get_nums():
-            num.append(self.current_char())
+        while self.current() and (self.current() in self.nums or self.current() == "."):
+            num.append(self.current())
             self.move()
         return Token("NUMBER", float("".join(num)))
 
     def identifier(self):
         text = []
-        while self.get_text():
-            text.append(self.current_char())
+        while self.current() and (self.current() in self.text or self.current() in self.nums):
+            text.append(self.current())
             self.move()
 
         value = "".join(text)
@@ -70,11 +51,23 @@ class Lexer:
 
         return Token("IDENTIFIER", value)
 
+    def string(self):
+        self.move()  # skip opening '
+        chars = []
+
+        while self.current() and self.current() != "'":
+            chars.append(self.current())
+            self.move()
+
+        self.move()  # skip closing '
+        return Token("STRING", "".join(chars))
+
     def tokenise(self):
         tokens = []
 
-        while self.current_char():
-            c = self.current_char()
+        while self.current():
+
+            c = self.current()
 
             if c == "\n":
                 tokens.append(Token("NEWLINE"))
@@ -86,23 +79,64 @@ class Lexer:
                 continue
 
             if c == "'":
-                tokens.append(self.get_string())
+                tokens.append(self.string())
                 continue
 
-            if c in self.operators:
+            # ---------------- COMPARISONS ----------------
+
+            if c == "=" and self.peek() == "=":
+                tokens.append(Token("EQ", "EQ"))
+                self.move()
+                self.move()
+                continue
+
+            if c == "!" and self.peek() == "=":
+                tokens.append(Token("NE", "NE"))
+                self.move()
+                self.move()
+                continue
+
+            if c == ">" and self.peek() == "=":
+                tokens.append(Token("GTE", "GTE"))
+                self.move()
+                self.move()
+                continue
+
+            if c == "<" and self.peek() == "=":
+                tokens.append(Token("LTE", "LTE"))
+                self.move()
+                self.move()
+                continue
+
+            if c == ">":
+                tokens.append(Token("GT", "GT"))
+                self.move()
+                continue
+
+            if c == "<":
+                tokens.append(Token("LT", "LT"))
+                self.move()
+                continue
+
+            # ---------------- MATH OPS ----------------
+
+            if c in "+-*/=":
                 tokens.append(Token("OPERATOR", c))
                 self.move()
                 continue
 
-            elif c in self.nums:
+            # ---------------- NUMBERS ----------------
+
+            if c in self.nums:
                 tokens.append(self.number())
                 continue
 
-            elif c in self.text:
+            # ---------------- IDENTIFIERS ----------------
+
+            if c in self.text:
                 tokens.append(self.identifier())
                 continue
 
-            else:
-                raise Exception(f"Illegal character: {c}")
+            raise Exception(f"Illegal character: {c}")
 
         return tokens
