@@ -82,7 +82,12 @@ class ComparisonNode:
     def __repr__(self):
         return f"Repeat({self.times}, {self.body})"
 
-
+class InputNode():
+	def __init__(self,text=None):
+		self.text = text
+	def __repr__(self):
+		return f"Input({self.text}"
+		
 
 class RandintNode:
     def __init__(self, low, high):

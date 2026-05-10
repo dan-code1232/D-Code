@@ -20,7 +20,10 @@ class Interpreter:
 
         elif isinstance(node, AccessVarNode):
             return self.memory.get(node.name, 0)
-
+            
+        elif isinstance(node,InputNode):
+            return float(input(">>>"))
+			
         elif isinstance(node, AssignVarNode):
             val = self.eval(node.value)
             self.memory[node.name] = val
@@ -36,7 +39,7 @@ class Interpreter:
             if low > high:
                 low, high = high, low
 
-            print( low + (self.rng.next() % (high - low + 1)))
+            
             return low + (self.rng.next() % (high - low + 1))
 
         elif isinstance(node, IfNode):

@@ -111,7 +111,11 @@ class Parser:
             if c.value == "say":
                 self.move()
                 return SayNode(self.parse_comparison())
-
+                
+            if c.value == "input":
+                self.move()
+                return InputNode()
+                
             if c.value == "if":
                 self.move()
 
