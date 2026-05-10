@@ -15,7 +15,7 @@ class Lexer:
 
         self.nums = "0123456789"
         self.text = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_"
-        self.keywords = ["say", "repeat", "end", "if", "else","random_num"]
+        self.keywords = ["say", "repeat", "end", "if", "else","random_num","input"]
 
     def current(self):
         return self.code[self.pos] if self.pos < self.length else None
