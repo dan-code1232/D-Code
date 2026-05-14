@@ -8,30 +8,49 @@ class Interpreter:
 
     def eval(self, node):
 
+        # =====================================================
+        # PROGRAM ROOT
+        # =====================================================
         if isinstance(node, ProgramNode):
+            result = None
             for s in node.statements:
-                self.eval(s)
+                result = self.eval(s)
+            return result
 
+        # =====================================================
+        # LITERALS
+        # =====================================================
         elif isinstance(node, NumberNode):
             return node.value
 
         elif isinstance(node, StringNode):
             return node.value
 
+        # =====================================================
+        # VARIABLES
+        # =====================================================
         elif isinstance(node, AccessVarNode):
             return self.memory.get(node.name, 0)
-            
-        elif isinstance(node,InputNode):
-            return float(input(">>>"))
-			
+
         elif isinstance(node, AssignVarNode):
             val = self.eval(node.value)
             self.memory[node.name] = val
             return val
 
-        elif isinstance(node, SayNode):
-            print(self.eval(node.value))
+        # =====================================================
+        # INPUT / OUTPUT
+        # =====================================================
+        elif isinstance(node, InputNode):
+            return float(input(">>> "))
 
+        elif isinstance(node, SayNode):
+            val = self.eval(node.value)
+            print(val)
+            return val
+
+        # =====================================================
+        # RANDOM
+        # =====================================================
         elif isinstance(node, RandintNode):
             low = self.eval(node.low)
             high = self.eval(node.high)
@@ -39,18 +58,28 @@ class Interpreter:
             if low > high:
                 low, high = high, low
 
-            
             return low + (self.rng.next() % (high - low + 1))
 
+        # =====================================================
+        # IF STATEMENTS
+        # =====================================================
         elif isinstance(node, IfNode):
             if self.eval(node.condition):
+                result = None
                 for stmt in node.body:
-                    self.eval(stmt)
+                    result = self.eval(stmt)
+                return result
             else:
+                result = None
                 for stmt in node.else_body:
-                    self.eval(stmt)
+                    result = self.eval(stmt)
+                return result
 
+        # =====================================================
+        # BINARY OPERATIONS (MATH CORE)
+        # =====================================================
         elif isinstance(node, BinOpNode):
+
             l = self.eval(node.left)
             r = self.eval(node.right)
 
@@ -78,8 +107,22 @@ class Interpreter:
             if op == "LTE":
                 return l <= r
 
+        # =====================================================
+        # LOOPS
+        # =====================================================
         elif isinstance(node, RepeatNode):
+
             times = int(self.eval(node.times))
+            result = None
+
             for _ in range(times):
                 for s in node.body:
-                    self.eval(s)
+                    result = self.eval(s)
+
+            return result
+
+        # =====================================================
+        # SAFETY FALLBACK
+        # =====================================================
+        else:
+            raise Exception(f"Unknown node type: {type(node)}")

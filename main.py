@@ -1,46 +1,75 @@
 from lexer import Lexer
 from parser import Parser
 from interpreter import Interpreter
+from Compiler import Compiler
+from VM import VM
 
-code = """
-say '=== DRAGON HUNT ==='
-say '3 rounds. Beat dragon each time!'
-score = 0
-say'The lower you guess,if you beat the dragon,the more points you get'
-num = 1
-repeat 3
-    say 'Round '
-    say num
-    num = num +  1
-    player_roll = input
-    
-    dragon_roll = random_num(1,10)
-    say 'Dragon rolls:'
-    say dragon_roll
-    
-    if player_roll > dragon_roll
-        say 'You WIN the round!'
-        player_roll = 10 - player_roll
-        score = score + player_roll
-    else
-        say 'Dragon wins round!'
-    end
-end
+interp = Interpreter()
+vm = VM()
 
-say 'Final score:'
-say score
-if score > 5
-    say 'HERO VICTORY!'
-else
-    say 'Try harder next time!'
-end
+mode = ""
 
-"""
+while mode not in ["1", "2"]:
 
-lexer = Lexer(code)
-tokens = lexer.tokenise()
+    print()
+    print("D-CODE")
+    print()
+    print("1 - Interpreter")
+    print("2 - VM")
+    print()
 
-parser = Parser(tokens)
-ast = parser.parse()
+    mode = input("Select mode: ")
 
-Interpreter().eval(ast)
+print()
+
+def show_mode():
+    if mode == "1":
+        print("Switched to Interpreter")
+    else:
+        print("Switched to VM")
+
+show_mode()
+
+print("Type 'exit' to quit")
+print("Type 'change' to switch mode")
+print()
+
+while True:
+
+    code = input(">>> ").strip()
+
+    if code.lower() == "exit":
+        break
+
+    if code.lower() == "change":
+        mode = "2" if mode == "1" else "1"
+        show_mode()
+        continue
+
+    try:
+
+        lexer = Lexer(code)
+        tokens = lexer.tokenise()
+
+        parser = Parser(tokens)
+        ast = parser.parse()
+
+        if mode == "1":
+
+            result = interp.eval(ast)
+
+            if result is not None:
+                print(result)
+
+        else:
+
+            compiler = Compiler()
+            bytecode = compiler.compile(ast)
+
+            vm.run(bytecode)
+
+            if vm.stack:
+                print(vm.stack[-1])
+
+    except Exception as e:
+        print("Error:", e)
